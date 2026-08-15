@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Pizarra</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  
+  <style>
+    body { background-color: #1a2e1f; color: white; font-family: sans-serif; height: 100vh; display: flex; flex-direction: column; padding: 15px; margin: 0; }
+    .board { flex: 1; border: 8px solid #7c481f; border-radius: 15px; background: #223c2a; display: flex; padding: 20px; }
+    #text { flex: 1; background: transparent; border: none; color: white; font-size: 35px; text-align: center; resize: none; outline: none; }
+    .controls { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 15px; }
+    button { padding: 15px; border-radius: 10px; border: none; font-size: 20px; background: #374151; color: white; }
+    .mic { background: #2563eb; }
+    .speak { background: #059669; }
+  </style>
+</head>
+<body>
+  <div class="board">
+    <textarea id="text" placeholder="Pulsa micro para dictar..."></textarea>
+  </div>
+  <div class="controls">
+    <button class="mic" onclick="dictar()">🎤</button>
+    <button class="speak" onclick="leer()">🔊</button>
+    <button onclick="tamano(-4)">A-</button>
+    <button onclick="tamano(4)">A+</button>
+  </div>
+
+  <script>
+    const area = document.getElementById('text');
+    
+    function dictar() {
+      const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      rec.lang = 'es-ES';
+      rec.onresult = (e) => area.value = e.results[0][0].transcript;
+      rec.start();
+    }
+
+    function leer() {
+      const msg = new SpeechSynthesisUtterance(area.value);
+      msg.lang = 'es-ES';
+      window.speechSynthesis.speak(msg);
+    }
+
+    function tamano(delta) {
+      let size = parseInt(window.getComputedStyle(area).fontSize);
+      area.style.fontSize = (size + delta) + 'px';
+    }
+  </script>
+</body>
+</html>
+
